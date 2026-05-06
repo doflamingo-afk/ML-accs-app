@@ -1,97 +1,76 @@
-/* TikTok Standard Full UI */
-* { box-sizing: border-box; }
-body, html {
-    margin: 0; padding: 0;
-    width: 100%; height: 100%;
-    background-color: black;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    overflow: hidden;
+const firebaseConfig = {
+  apiKey: "AIzaSyCe2a9KNIlSpPqX1chHfVeGzVR2xcMWu88",
+  authDomain: "ml-accs-29667.firebaseapp.com",
+  databaseURL: "https://ml-accs-29667-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ml-accs-29667",
+  storageBucket: "ml-accs-29667.firebasestorage.app",
+  messagingSenderId: "596259472222",
+  appId: "1:596259472222:web:e058877daff664fb2285cf"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const IMGBB_KEY = '7a311d3c3f79a9940ee3a577c46fefea';
+
+async function loadPosts() {
+    const feed = document.getElementById('mainFeed');
+    const snapshot = await db.collection('posts').orderBy('timestamp', 'desc').get();
+    feed.innerHTML = '';
+    snapshot.forEach(doc => {
+        const post = doc.data();
+        const id = doc.id;
+        feed.innerHTML += `
+            <div class="post-container">
+                <img src="${post.imageUrl}" class="post-media">
+                <div class="post-sidebar">
+                    <div class="action-item" onclick="likePost('${id}')">
+                        <i class="fa-solid fa-heart" id="heart-${id}" style="color:${post.isLiked ? '#fe2c55' : 'white'}"></i>
+                        <span>${post.likes || 0}</span>
+                    </div>
+                    <div class="action-item"><i class="fa-solid fa-comment-dots"></i><span>0</span></div>
+                    <div class="action-item" onclick="sharePost('${post.imageUrl}')"><i class="fa-solid fa-share"></i><span>Share</span></div>
+                </div>
+                <div class="post-footer">
+                    <h4>@ml_seller_pro</h4>
+                    <p>${post.description}</p>
+                    <b>${post.price} MMK</b>
+                </div>
+            </div>`;
+    });
 }
 
-#mainFeed {
-    width: 100vw; height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory; /* တဆစ်ချင်း scroll ဆွဲဖို့ */
-    scrollbar-width: none; /* scrollbar ဖျောက်ထားမယ် */
+async function likePost(id) {
+    await db.collection('posts').doc(id).update({ likes: firebase.firestore.FieldValue.increment(1) });
+    loadPosts();
 }
 
-.post-container {
-    width: 100vw; height: 100vh;
-    scroll-snap-align: start;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: black;
+function sharePost(url) { navigator.clipboard.writeText(url); alert("Link copied!"); }
+
+function toggleUpload() {
+    const m = document.getElementById('uploadModal');
+    m.style.display = (m.style.display === 'none' || m.style.display === '') ? 'block' : 'none';
 }
 
-.post-media {
-    max-width: 100%; max-height: 100%;
-    object-fit: contain;
+async function uploadPost() {
+    const price = document.getElementById('accPrice').value;
+    const desc = document.getElementById('accDesc').value;
+    const file = document.getElementById('fileInput').files[0];
+    if(!price || !desc || !file) return alert("အကုန်ဖြည့်ပါ!");
+
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method: 'POST', body: formData });
+    const data = await res.json();
+
+    await db.collection('posts').add({
+        imageUrl: data.data.url,
+        price: price,
+        description: desc,
+        likes: 0,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    location.reload();
 }
 
-/* Sidebar Icons */
-.post-sidebar {
-    position: absolute;
-    right: 12px;
-    bottom: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 10;
-}
-
-.action-item {
-    margin-bottom: 20px;
-    text-align: center;
-    color: white;
-    cursor: pointer;
-}
-
-.action-item i {
-    font-size: 30px;
-    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
-}
-
-.action-item span {
-    font-size: 12px;
-    margin-top: 4px;
-    display: block;
-    font-weight: 600;
-}
-
-/* Footer Info */
-.post-footer {
-    position: absolute;
-    bottom: 90px;
-    left: 12px;
-    color: white;
-    max-width: 75%;
-    z-index: 10;
-}
-
-.post-footer h4 { margin: 0 0 8px 0; font-size: 17px; }
-.post-footer p { margin: 0 0 10px 0; font-size: 15px; line-height: 1.4; }
-.post-footer b { color: #fe2c55; font-size: 18px; }
-
-/* Bottom Nav */
-.bottom-nav {
-    position: fixed;
-    bottom: 0; width: 100%; height: 60px;
-    background: black;
-    border-top: 0.5px solid #333;
-    display: flex; justify-content: space-around; align-items: center;
-    z-index: 100;
-}
-
-.nav-item { color: #8a8a8e; text-align: center; font-size: 10px; }
-.nav-item.active { color: white; }
-.nav-item i { font-size: 20px; margin-bottom: 4px; }
-
-.post-plus-btn {
-    background: linear-gradient(to right, #00f2ea 0%, #fe2c55 100%);
-    width: 45px; height: 28px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    color: black; font-size: 18px;
-}
+document.getElementById('plusBtn').onclick = toggleUpload;
+loadPosts();
