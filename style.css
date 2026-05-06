@@ -1,0 +1,22 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; color: #fff; font-family: 'Proxima Nova', sans-serif; overflow: hidden; }
+
+.feed { height: 100vh; width: 100vw; scroll-snap-type: y mandatory; overflow-y: scroll; }
+.post-container { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; }
+
+.side-bar { position: absolute; right: 10px; bottom: 100px; display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10; }
+.user-profile { width: 50px; height: 50px; position: relative; margin-bottom: 10px; }
+.user-profile img { width: 100%; height: 100%; border-radius: 50%; border: 2px solid white; }
+.user-profile .plus { position: absolute; bottom: -5px; left: 15px; background: #fe2c55; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; text-align: center; }
+
+.action-item { text-align: center; font-size: 28px; }
+.action-item span { font-size: 12px; display: block; font-weight: bold; margin-top: 2px; }
+
+.music-disc { width: 45px; height: 45px; animation: rotate 3s linear infinite; margin-top: 10px; }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: #000; border-top: 0.5px solid #333; display: flex; justify-content: space-around; align-items: center; }
+.nav-item { color: #888; font-size: 18px; text-align: center; }
+.nav-item p { font-size: 10px; }
+.nav-item.active { color: #fff; }
+.post-plus { background: linear-gradient(to right, #69C9D0, #EE1D52); padding: 5px 15px; border-radius: 8px; color: black !important; }
