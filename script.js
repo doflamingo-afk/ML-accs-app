@@ -41,3 +41,39 @@ async function loadPosts() {
 
 // App စဖွင့်တာနဲ့ Post တွေပြမယ်
 loadPosts();
+// Form ဖွင့်/ပိတ် လုပ်တဲ့ Function
+function toggleUpload() {
+    const modal = document.getElementById('uploadModal');
+    modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+}
+
+// အလယ်က + ခလုတ်ကို နှိပ်ရင် Form ပွင့်အောင် ချိတ်မယ်
+document.querySelector('.nav-item.plus').addEventListener('click', toggleUpload);
+
+// Post တင်တဲ့ Function (လောလောဆယ် Firestore ထဲ တန်းထည့်တာ)
+async function uploadPost() {
+    const price = document.getElementById('accPrice').value;
+    const desc = document.getElementById('accDesc').value;
+    const files = document.getElementById('fileInput').files;
+
+    if(!price || !desc || files.length === 0) {
+        alert("Please fill all fields and select a photo!");
+        return;
+    }
+
+    // AI Warn: ပုံတင်ဖို့ Storage မရသေးတဲ့အတွက် လောလောဆယ် စမ်းသပ်ပုံ Link ကိုပဲ သုံးထားမယ်
+    try {
+        await db.collection('posts').add({
+            imageUrl: "https://wallpapercave.com/wp/wp6602334.jpg", // နောက်အဆင့်မှာ ImgBB နဲ့ ချိတ်မယ်
+            price: price,
+            description: desc,
+            likes: 0,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert("Success! Your post is live.");
+        toggleUpload(); // Form ပိတ်မယ်
+        loadPosts();    // Feed ကို Refresh လုပ်မယ်
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+}
