@@ -1,22 +1,97 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #000; color: #fff; font-family: 'Proxima Nova', sans-serif; overflow: hidden; }
+/* TikTok Standard Full UI */
+* { box-sizing: border-box; }
+body, html {
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
+    background-color: black;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden;
+}
 
-.feed { height: 100vh; width: 100vw; scroll-snap-type: y mandatory; overflow-y: scroll; }
-.post-container { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; }
+#mainFeed {
+    width: 100vw; height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory; /* တဆစ်ချင်း scroll ဆွဲဖို့ */
+    scrollbar-width: none; /* scrollbar ဖျောက်ထားမယ် */
+}
 
-.side-bar { position: absolute; right: 10px; bottom: 100px; display: flex; flex-direction: column; align-items: center; gap: 15px; z-index: 10; }
-.user-profile { width: 50px; height: 50px; position: relative; margin-bottom: 10px; }
-.user-profile img { width: 100%; height: 100%; border-radius: 50%; border: 2px solid white; }
-.user-profile .plus { position: absolute; bottom: -5px; left: 15px; background: #fe2c55; border-radius: 50%; width: 20px; height: 20px; font-size: 14px; text-align: center; }
+.post-container {
+    width: 100vw; height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+}
 
-.action-item { text-align: center; font-size: 28px; }
-.action-item span { font-size: 12px; display: block; font-weight: bold; margin-top: 2px; }
+.post-media {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+}
 
-.music-disc { width: 45px; height: 45px; animation: rotate 3s linear infinite; margin-top: 10px; }
-@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* Sidebar Icons */
+.post-sidebar {
+    position: absolute;
+    right: 12px;
+    bottom: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
 
-.bottom-nav { position: fixed; bottom: 0; width: 100%; height: 60px; background: #000; border-top: 0.5px solid #333; display: flex; justify-content: space-around; align-items: center; }
-.nav-item { color: #888; font-size: 18px; text-align: center; }
-.nav-item p { font-size: 10px; }
-.nav-item.active { color: #fff; }
-.post-plus { background: linear-gradient(to right, #69C9D0, #EE1D52); padding: 5px 15px; border-radius: 8px; color: black !important; }
+.action-item {
+    margin-bottom: 20px;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+}
+
+.action-item i {
+    font-size: 30px;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
+}
+
+.action-item span {
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    font-weight: 600;
+}
+
+/* Footer Info */
+.post-footer {
+    position: absolute;
+    bottom: 90px;
+    left: 12px;
+    color: white;
+    max-width: 75%;
+    z-index: 10;
+}
+
+.post-footer h4 { margin: 0 0 8px 0; font-size: 17px; }
+.post-footer p { margin: 0 0 10px 0; font-size: 15px; line-height: 1.4; }
+.post-footer b { color: #fe2c55; font-size: 18px; }
+
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed;
+    bottom: 0; width: 100%; height: 60px;
+    background: black;
+    border-top: 0.5px solid #333;
+    display: flex; justify-content: space-around; align-items: center;
+    z-index: 100;
+}
+
+.nav-item { color: #8a8a8e; text-align: center; font-size: 10px; }
+.nav-item.active { color: white; }
+.nav-item i { font-size: 20px; margin-bottom: 4px; }
+
+.post-plus-btn {
+    background: linear-gradient(to right, #00f2ea 0%, #fe2c55 100%);
+    width: 45px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: black; font-size: 18px;
+}
