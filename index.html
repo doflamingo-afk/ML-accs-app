@@ -37,5 +37,19 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="script.js"></script>
+    <div id="uploadModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; padding:20px; color:white; overflow-y:auto;">
+    <h2 style="text-align:center;">Post New Account</h2>
+    <p>Upload Images (Max 10)</p>
+    <input type="file" id="fileInput" multiple accept="image/*" style="margin-bottom:20px;">
+    
+    <input type="text" id="accPrice" placeholder="Price (e.g. 50,000 MMK)" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:none;">
+    
+    <textarea id="accDesc" placeholder="Account Description (Skins, Rank, etc.)" style="width:100%; height:100px; padding:10px; margin-bottom:20px; border-radius:5px; border:none;"></textarea>
+    
+    <button onclick="uploadPost()" style="width:100%; padding:15px; background:#fe2c55; border:none; color:white; border-radius:5px; font-weight:bold;">POST NOW</button>
+    <button onclick="toggleUpload()" style="width:100%; padding:10px; background:transparent; border:1px solid white; color:white; border-radius:5px; margin-top:10px;">CANCEL</button>
+</div>
+
 </body>
 </html>
+
