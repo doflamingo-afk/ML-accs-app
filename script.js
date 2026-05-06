@@ -1,4 +1,4 @@
-// ၁။ Firebase Configuration
+// ၁။ Firebase Setup
 const firebaseConfig = {
   apiKey: "AIzaSyCe2a9KNIlSpPqX1chHfVeGzVR2xcMWu88",
   authDomain: "ml-accs-29667.firebaseapp.com",
@@ -12,91 +12,92 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const IMGBB_KEY = '7a311d3c3f79a9940ee3a577c46fefea';
 
-// ၂။ ImgBB API Key (မင်းပေးတာ ထည့်ထားတယ်)
-const IMGBB_API_KEY = '7a311d3c3f79a9940ee3a577c46fefea';
-
-// ၃။ Feed ကို Database ထဲကနေ ဆွဲထုတ်ပြမယ့် Function
+// ၂။ Feed ကို ပြသခြင်း (Like, Comment, Share Button များပါဝင်သည်)
 async function loadPosts() {
-    const feedContainer = document.getElementById('mainFeed');
-    try {
-        const snapshot = await db.collection('posts').orderBy('timestamp', 'desc').get();
-        feedContainer.innerHTML = ''; 
+    const feed = document.getElementById('mainFeed');
+    const snapshot = await db.collection('posts').orderBy('timestamp', 'desc').get();
+    feed.innerHTML = '';
 
-        snapshot.forEach(doc => {
-            const post = doc.data();
-            const postElement = `
-                <div class="post" style="position:relative; width:100vw; height:100vh; background:black; display:flex; align-items:center; justify-content:center;">
-                    <img src="${post.imageUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">
-                    <div class="post-sidebar" style="position:absolute; right:15px; bottom:150px; color:white; text-align:center;">
-                        <div class="action-item">❤️<br><span>${post.likes || 0}</span></div>
+    snapshot.forEach(doc => {
+        const post = doc.data();
+        const id = doc.id;
+        feed.innerHTML += `
+            <div class="post-container">
+                <img src="${post.imageUrl}" class="post-media">
+                <div class="post-sidebar">
+                    <div class="action-item" onclick="handleLike('${id}')">
+                        <i class="fa-solid fa-heart" id="heart-${id}"></i>
+                        <span>${post.likes || 0}</span>
                     </div>
-                    <div class="post-footer" style="position:absolute; bottom:100px; left:20px; color:white;">
-                        <h4>@ml_seller_pro</h4>
-                        <p>${post.description}</p>
-                        <b style="color:#fe2c55; font-size:1.2rem;">Price: ${post.price}</b>
+                    <div class="action-item" onclick="alert('Comments are disabled for this account.')">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>0</span>
+                    </div>
+                    <div class="action-item" onclick="handleShare('${post.imageUrl}')">
+                        <i class="fa-solid fa-share"></i>
+                        <span>Share</span>
                     </div>
                 </div>
-            `;
-            feedContainer.innerHTML += postElement;
-        });
-    } catch (error) {
-        console.error("Error loading posts: ", error);
-    }
+                <div class="post-footer">
+                    <h4>@ml_seller_pro</h4>
+                    <p>${post.description}</p>
+                    <b>${post.price} MMK</b>
+                </div>
+            </div>
+        `;
+    });
 }
 
-// ၄။ Form ဖွင့်/ပိတ် လုပ်တဲ့ Function
-function toggleUpload() {
-    const modal = document.getElementById('uploadModal');
-    modal.style.display = (modal.style.display === 'none' || modal.style.display === '') ? 'block' : 'none';
+// ၃။ Like Function
+async function handleLike(id) {
+    const heart = document.getElementById(`heart-${id}`);
+    heart.style.color = '#fe2c55'; // အနီရောင်ပြောင်းမယ်
+    await db.collection('posts').doc(id).update({
+        likes: firebase.firestore.FieldValue.increment(1)
+    });
+    // အရေအတွက်ကို UI မှာ တန်းတိုးပြမယ်
+    let count = heart.nextElementSibling;
+    count.innerText = parseInt(count.innerText) + 1;
 }
 
-// ၅။ အလယ်က + ခလုတ်ကို နှိပ်ရင် Form ပွင့်အောင် ချိတ်မယ်
-const plusBtn = document.getElementById('plusBtn');
-if (plusBtn) plusBtn.onclick = toggleUpload;
+// ၄။ Share Function
+function handleShare(url) {
+    navigator.clipboard.writeText(url);
+    alert("Image Link copied! Share it with your friends.");
+}
 
-// ၆။ Post တင်တဲ့ Function (ImgBB ကို ပုံအရင်ပို့မယ်)
+// ၅။ Upload Function
 async function uploadPost() {
     const price = document.getElementById('accPrice').value;
     const desc = document.getElementById('accDesc').value;
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
+    const file = document.getElementById('fileInput').files[0];
 
-    if (!price || !desc || !file) {
-        alert("အချက်အလက်အားလုံး ပြည့်စုံအောင် ဖြည့်ပေးပါ!");
-        return;
-    }
+    if(!price || !desc || !file) return alert("Fill all info!");
 
-    alert("ပုံတင်နေပါပြီ ခဏစောင့်ပါ...");
-
-    // ImgBB ကို ပုံပို့တဲ့အပိုင်း
+    alert("Uploading... Please wait.");
     const formData = new FormData();
     formData.append('image', file);
 
-    try {
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        const finalImageUrl = data.data.url;
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method:'POST', body:formData });
+    const data = await res.json();
 
-        // Firebase Firestore ထဲ သိမ်းမယ်
-        await db.collection('posts').add({
-            imageUrl: finalImageUrl,
-            price: price,
-            description: desc,
-            likes: 0,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
+    await db.collection('posts').add({
+        imageUrl: data.data.url,
+        price: price,
+        description: desc,
+        likes: 0,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-        alert("အောင်မြင်စွာ တင်ပြီးပါပြီ!");
-        toggleUpload();
-        location.reload(); 
-    } catch (error) {
-        alert("Error: " + error.message);
-    }
+    location.reload();
 }
 
-// App စဖွင့်တာနဲ့ ပုံတွေပြမယ်
+function toggleUpload() {
+    const m = document.getElementById('uploadModal');
+    m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+
+document.getElementById('plusBtn').onclick = toggleUpload;
 loadPosts();
