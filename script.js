@@ -1,4 +1,4 @@
-// Firebase Configuration (New Key Applied)
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCe2a9KNIlSpPqX1chHfVeGzVR2xcMWu88",
   authDomain: "ml-accs-29667.firebaseapp.com",
@@ -8,33 +8,36 @@ const firebaseConfig = {
   appId: "1:596259472222:web:e058877daff664fb2285cf"
 };
 
-// Initialize Firebase (Compat mode for easier use)
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth();
-const storage = firebase.storage();
 
-// TikTok-style Interaction Logic
-function handleLike(postId) {
-    console.log("Liked post:", postId);
-    // AI Warn: Scammer တွေကို Like မပေးမိအောင် သတိထားပါလို့ ထည့်မယ်
+// TikTok Feed ကို Data ဆွဲထည့်မယ့် Function
+async function loadPosts() {
+    const feedContainer = document.getElementById('mainFeed');
+    const snapshot = await db.collection('posts').get();
+    
+    feedContainer.innerHTML = ''; // အဟောင်းတွေရှင်းမယ်
+
+    snapshot.forEach(doc => {
+        const post = doc.data();
+        const postElement = `
+            <div class="post" style="position:relative; width:100vw; height:100vh; background:black; display:flex; align-items:center; justify-content:center;">
+                <img src="${post.imageUrl}" style="max-width:100%; max-height:100%; object-fit:contain;">
+                <div class="post-sidebar" style="position:absolute; right:15px; bottom:150px; color:white; text-align:center;">
+                    <div class="action-btn">❤️<br><span>${post.likes || 0}</span></div>
+                    <div class="action-btn">💬<br><span>0</span></div>
+                </div>
+                <div class="post-footer" style="position:absolute; bottom:80px; left:20px; color:white;">
+                    <h4>@ml_seller_pro</h4>
+                    <p>${post.description}</p>
+                    <b style="color:#fe2c55;">Price: ${post.price}</b>
+                </div>
+            </div>
+        `;
+        feedContainer.innerHTML += postElement;
+    });
 }
 
-// User Profile System (Remembering Users)
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        console.log("User logged in:", user.uid);
-        // User ရဲ့ MLBB ID တွေကို Database ထဲကနေ ဆွဲထုတ်မယ်
-    } else {
-        console.log("No user logged in.");
-    }
-});
-
-// AI Acc Scan Guard
-async function scanAccount(imageFile) {
-    console.log("AI is scanning MLBB account data...");
-    // MLBB မဟုတ်တဲ့ပုံဆိုရင် User ကို သတိပေးမယ်
-    return true; 
-}
-
-console.log("ML Accs Master Engine: 2.0 Connected to Firebase Successfully.");
+// App စဖွင့်တာနဲ့ Post တွေပြမယ်
+loadPosts();
