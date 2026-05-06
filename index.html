@@ -3,39 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ML Accs - TikTok Style</title>
+    <title>ML Accs APK - TikTok Edition</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div id="update-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; flex-direction:column; text-align:center; padding:20px;">
-        <h2>Update Required</h2>
-        <p>Please update to continue buying and selling MLBB accounts.</p>
-        <button style="background:#fe2c55; color:white; border:none; padding:12px 30px; border-radius:5px; margin-top:15px;">Update Now</button>
-    </div>
-
-    <div class="app">
+    <div id="app">
         <div class="feed" id="mainFeed">
-            <div style="height:100vh; display:flex; justify-content:center; align-items:center;">
-                <p>TikTok Style MLBB Market Loading...</p>
-             </div>
-        </div>
+            </div>
 
         <div class="side-bar">
-            <div class="action-item"><i class="fa-solid fa-heart"></i><span>Like</span></div>
-            <div class="action-item"><i class="fa-solid fa-comment"></i><span>450</span></div>
-            <div class="action-item" style="color:#fe2c55;"><i class="fa-solid fa-cart-shopping"></i><span>Buy</span></div>
-            <div class="action-item"><i class="fa-solid fa-share"></i><span>Share</span></div>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/100" id="userAvatar">
+                <div class="plus">+</div>
+            </div>
+            <div class="action-item"><i class="fa-solid fa-heart"></i><span id="likeCount">0</span></div>
+            <div class="action-item"><i class="fa-solid fa-comment"></i><span>0</span></div>
+            <div class="action-item"><i class="fa-solid fa-bookmark"></i><span>0</span></div>
+            <div id="buyBtnContainer"></div> <div class="action-item share-btn"><i class="fa-solid fa-share"></i><span>0</span></div>
+            <div class="music-disc"><img src="https://www.pngall.com/wp-content/uploads/2/Vinyl-Record-PNG-Transparent-HD-Photo.png"></div>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-tab active"><i class="fa-solid fa-house"></i><p>Home</p></div>
-            <div class="nav-tab"><i class="fa-solid fa-magnifying-glass"></i><p>Discover</p></div>
-            <div class="nav-tab" style="background:linear-gradient(to right, #69C9D0, #EE1D52); width:45px; height:30px; border-radius:8px; color:black; display:flex; justify-content:center; align-items:center;"><i class="fa-solid fa-plus"></i></div>
-            <div class="nav-tab"><i class="fa-solid fa-message"></i><p>Inbox</p></div>
-            <div class="nav-tab"><i class="fa-solid fa-user"></i><p>Profile</p></div>
+            <div class="nav-item active"><i class="fa-solid fa-house"></i><p>Home</p></div>
+            <div class="nav-item"><i class="fa-solid fa-magnifying-glass"></i><p>Discover</p></div>
+            <div class="nav-item post-plus"><i class="fa-solid fa-plus"></i></div>
+            <div class="nav-item" onclick="openInbox()"><i class="fa-solid fa-message"></i><p>Inbox</p></div>
+            <div class="nav-item" onclick="openProfile()"><i class="fa-solid fa-user"></i><p>Profile</p></div>
         </nav>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
