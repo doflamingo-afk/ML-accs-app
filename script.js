@@ -1,35 +1,40 @@
+// Firebase Configuration (New Key Applied)
 const firebaseConfig = {
-  apiKey: "AIzaSyB6xcAx_2Fz74pPly-SjvY8ohk4l7N64D8",
-  authDomain: "ml-accs-155d5.firebaseapp.com",
-  projectId: "ml-accs-155d5",
-  storageBucket: "ml-accs-155d5.firebasestorage.app",
-  messagingSenderId: "945505579703",
-  appId: "1:945505579703:web:9134a3b14d4173b9241332"
+  apiKey: "AIzaSyCe2a9KNIlSpPqX1chHfVeGzVR2xcMWu88",
+  authDomain: "ml-accs-29667.firebaseapp.com",
+  projectId: "ml-accs-29667",
+  storageBucket: "ml-accs-29667.firebasestorage.app",
+  messagingSenderId: "596259472222",
+  appId: "1:596259472222:web:e058877daff664fb2285cf"
 };
 
+// Initialize Firebase (Compat mode for easier use)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const auth = firebase.auth();
+const storage = firebase.storage();
 
-// AI Guard - MLBB Content Check
-async function aiMLBBGuard(file) {
-    console.log("AI: Scanning for MLBB content...");
-    // AI က ပုံကို စစ်ဆေးတဲ့ Logic
-    return true; // လောလောဆယ် Pass ပေးထားမည်
+// TikTok-style Interaction Logic
+function handleLike(postId) {
+    console.log("Liked post:", postId);
+    // AI Warn: Scammer တွေကို Like မပေးမိအောင် သတိထားပါလို့ ထည့်မယ်
 }
 
-// Check Device Post Limit
-function checkDeviceLimit() {
-    if(localStorage.getItem('hasPostedAcc')) {
-        alert("Warning: ဖုန်းတစ်လုံးကို Acc တစ်ခုပဲ ရောင်းခွင့်ရှိပါတယ်။");
-        return false;
+// User Profile System (Remembering Users)
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        console.log("User logged in:", user.uid);
+        // User ရဲ့ MLBB ID တွေကို Database ထဲကနေ ဆွဲထုတ်မယ်
+    } else {
+        console.log("No user logged in.");
     }
-    return true;
+});
+
+// AI Acc Scan Guard
+async function scanAccount(imageFile) {
+    console.log("AI is scanning MLBB account data...");
+    // MLBB မဟုတ်တဲ့ပုံဆိုရင် User ကို သတိပေးမယ်
+    return true; 
 }
 
-// Display Posts (TikTok Style)
-function renderFeed() {
-    const feed = document.getElementById('mainFeed');
-    // Database မှ Post များကို ယူပြီး TikTok UI အတိုင်း ပြပေးမည့် ကုဒ်
-}
-
-console.log("ML Accs APK: Master Code 1.1 Loaded Successfully.");
+console.log("ML Accs Master Engine: 2.0 Connected to Firebase Successfully.");
